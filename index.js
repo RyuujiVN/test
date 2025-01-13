@@ -1,15 +1,53 @@
-const express = require('express');
-const bodyParser = require('body-parser');
+import express from 'express';
+import bodyParser from "body-parser";
+import exitHook from 'async-exit-hook';
+import 'dotenv/config';
 
-const route = require("./api/v1/routes/route");
-const app = express();
-const port = 3000;
+import route from "./api/v1/routes/route.js";
+import { connectDatabase, getDatabase, closeDatabase } from './config/database.js';
 
-// parse application/json
-app.use(bodyParser.json());
+const startServer = async () => {
+    const app = express();
+    const port = 3000;
 
-route(app);
+    // parse application/json
+    app.use(bodyParser.json());
 
-app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
-})
+    // Connect database
+    connectDatabase();
+
+    route(app);
+
+    app.listen(port, () => {
+        console.log(`Example app listening on port ${port}`);
+    });
+
+    // Close database when error
+    exitHook(() => {
+        console.log('App exit!');
+        closeDatabase();
+    });
+
+}
+
+// IIFE
+(async () => {
+    try {
+        await connectDatabase();
+        console.log("Connect to MongoDB Cloud Atlas!");
+
+        // Khởi động server
+        startServer();
+    } catch (error) {
+        console.error(error);
+        process.exit(0);
+    }
+})()
+
+// connectDatabase()
+//     .then(() => console.log("Connect to MongoDB Cloud Atlas!"))
+//     .then(() => startServer())
+//     .catch(error => {
+//         console.error(error);
+//         process.exit(0);
+//     })
