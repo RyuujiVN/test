@@ -1,5 +1,5 @@
 // Author: TrungQuanDev: https://youtube.com/@trungquandev
-const StatusCodes = require('http-status-codes');
+import StatusCodes from 'http-status-codes';
 
 /**
  * Mock nhanh thông tin user thay vì phải tạo Database rồi query.
@@ -23,7 +23,7 @@ const MOCK_DATABASE = {
 const ACCESS_TOKEN_SECRET_SIGNATURE = 'KBgJwUETt4HeVD05WaXXI9V3JnwCVP'
 const REFRESH_TOKEN_SECRET_SIGNATURE = 'fcCjhnpeopVn2Hg1jG75MUi62051yL'
 
-module.exports.login = async (req, res) => {
+const login = async (req, res) => {
     console.log(req.body);
     try {
         if (req.body.email !== MOCK_DATABASE.USER.EMAIL || req.body.password !== MOCK_DATABASE.USER.PASSWORD) {
@@ -39,7 +39,7 @@ module.exports.login = async (req, res) => {
     }
 }
 
-module.exports.logout = async (req, res) => {
+const logout = async (req, res) => {
     try {
         // Do something
         res.status(StatusCodes.OK).json({ message: 'Logout API success!' })
@@ -48,11 +48,17 @@ module.exports.logout = async (req, res) => {
     }
 }
 
-module.exports.refreshToken = async (req, res) => {
+const refreshToken = async (req, res) => {
     try {
         // Do something
         res.status(StatusCodes.OK).json({ message: ' Refresh Token API success.' })
     } catch (error) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(error)
     }
+}
+
+export const userController = {
+    login,
+    logout,
+    refreshToken
 }
